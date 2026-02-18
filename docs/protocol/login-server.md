@@ -25,9 +25,6 @@ sequenceDiagram
     
     Client->>Login: POST /player/growid/checktoken?valKey=xxx
     Note right of Client: refreshToken (base64)<br/>clientData (pipe-separated)
-    Login->>Login: HTTP 307 Redirect
-    Note over Login: Preserves POST method<br/>and request body
-    Login->>Login: POST /player/growid/validate/checktoken
     Login->>Client: Success Response
     Note left of Login: token (updated)<br/>status: success<br/>accountAge
     
@@ -157,15 +154,15 @@ totalPlaytime|0
 klv|client_key
 hash2|-1825613599
 meta|metadata
-fhash|-716928004
-rid|device_id
+fhash|
+rid|
 platformID|0,1,1
 deviceVersion|0
 country|us
 hash|-1819361137
 mac|mac_address
-wk|client_key
-zf|zone_flag
+wk|
+zf|
 ```
 
 **Client Data Fields:**
@@ -266,11 +263,11 @@ Validates GrowID credentials and returns an authentication token.
 }
 ```
 
-### 3. Check Token (Redirect)
+### 3. Check Token
 
 **Endpoint:** `POST /player/growid/checktoken?valKey=...`
 
-Initial token validation endpoint that redirects to the actual validation handler using HTTP 307 (Temporary Redirect) to preserve the POST method and body.
+Validates the refresh token and returns an updated authentication token.
 
 **Query Parameters:**
 
@@ -323,18 +320,18 @@ GDPR|1
 FCMToken|
 category|_-5100
 totalPlaytime|0
-klv|client_key
+klv|
 hash2|-1825613599
 meta|metadata
-fhash|-716928004
+fhash|
 rid|device_identifier
 platformID|0,1,1
 deviceVersion|0
 country|us
 hash|-1819361137
 mac|mac_address
-wk|web_key
-zf|zone_flag
+wk|
+zf|
 ```
 
 **Body Fields:**
@@ -344,82 +341,6 @@ zf|zone_flag
 | `refreshToken` | Base64-encoded refresh token from previous login |
 | `clientData` | Pipe-separated client information (same format as dashboard) |
 
-**Response:** 
-
-HTTP 307 Temporary Redirect to `/player/growid/validate/checktoken`
-
-```yaml
-Location: /player/growid/validate/checktoken
-```
-
-The redirect preserves the POST method and request body.
-
-### 4. Validate Check Token
-
-**Endpoint:** `POST /player/growid/validate/checktoken`
-
-Validates the refresh token and returns an updated authentication token. This endpoint receives the redirected request from `/player/growid/checktoken`.
-
-**Content-Type:** `application/x-www-form-urlencoded`
-
-**Request Headers:**
-```yaml
-:method: POST
-:authority: login.growtopiagame.com
-:path: /player/growid/validate/checktoken
-:scheme: https
-cache-control: max-age=0
-upgrade-insecure-requests: 1
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0
-accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
-sec-fetch-site: none
-sec-fetch-mode: navigate
-sec-fetch-user: ?1
-sec-fetch-dest: document
-sec-ch-ua: "Not(A:Brand";v="8", "Chromium";v="144", "Microsoft Edge";v="144", "Microsoft Edge WebView2";v="144"
-sec-ch-ua-mobile: ?0
-sec-ch-ua-platform: "Windows"
-accept-encoding: gzip, deflate, br, zstd
-accept-language: en-US,en;q=0.9
-cookie: AWSALBTG=...; AWSALBTGCORS=...; AWSALB=...; AWSALBCORS=...; XSRF-TOKEN=...; growtopia_game_session=...
-priority: u=0, i
-```
-
-**Request Body:**
-
-(Same as the body from `/player/growid/checktoken`, forwarded via 307 redirect)
-
-```
-refreshToken=base64_encoded_refresh_token
-
-clientData=
-tankIDName|username
-tankIDPass|
-requestedName|
-f|1
-protocol|225
-game_version|5.4
-fz|22889144
-cbits|1024
-player_age|25
-GDPR|1
-FCMToken|
-category|_-5100
-totalPlaytime|0
-klv|client_key
-hash2|-1825613599
-meta|metadata
-fhash|-716928004
-rid|device_identifier
-platformID|0,1,1
-deviceVersion|0
-country|us
-hash|-1819361137
-mac|mac_address
-wk|web_key
-zf|zone_flag
-```
-
 **Response (Success):**
 ```json
 {
@@ -428,7 +349,7 @@ zf|zone_flag
   "token": "new_base64_encoded_token",
   "url": "",
   "accountType": "growtopia",
-  "accountAge": 25
+  "accountAge": 0
 }
 ```
 
@@ -450,8 +371,3 @@ zf|zone_flag
   "message": "Invalid or expired token."
 }
 ```
-
-::: info
-The redirect from `/player/growid/checktoken` to `/player/growid/validate/checktoken` may serve as an extra validation layer or routing mechanism, though its exact purpose in the authentication flow is unclear.
-:::
-
