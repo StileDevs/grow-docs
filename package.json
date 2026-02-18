@@ -1,0 +1,21 @@
+{
+  "name": "grow-docs",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "mermaid": "^11.12.2",
+    "vitepress": "^2.0.0-alpha.16",
+    "vitepress-mermaid-renderer": "^1.1.8",
+    "vue": "^3.5.28"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "private": true,
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "type": "module"
+}
