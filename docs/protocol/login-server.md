@@ -25,6 +25,8 @@ sequenceDiagram
     
     Client->>Login: POST /player/growid/checktoken?valKey=xxx
     Note right of Client: refreshToken (base64)<br/>clientData (pipe-separated)
+    Login->>Login: 307 Redirect to<br/>/player/growid/validate/checktoken
+    Note over Login: Server validates token<br/>at the redirected endpoint
     Login->>Client: Success Response
     Note left of Login: token (updated)<br/>status: success<br/>accountAge
     
@@ -269,6 +271,18 @@ Validates GrowID credentials and returns an authentication token.
 ### 3. Check Token
 
 **Endpoint:** `POST /player/growid/checktoken?valKey=...`
+
+**Note:** This endpoint uses a 307 (Temporary Redirect) to redirect requests to `/player/growid/validate/checktoken`. The client first calls `/player/growid/checktoken`, which the server redirects to the validation endpoint. Without this redirect, the login page will not complete and will get stuck.
+
+**Redirect Configuration:**
+```json
+redirects: {
+  "/player/growid/checktoken": {
+    status: 307,
+    destination: "/player/growid/validate/checktoken"
+  }
+}
+```
 
 Validates the refresh token and returns an updated authentication token.
 
