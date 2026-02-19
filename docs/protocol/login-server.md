@@ -226,6 +226,7 @@ Validates GrowID credentials and returns an authentication token.
 }
 ```
 
+
 **Request Fields:**
 
 | Field | Type | Required | Description |
@@ -233,6 +234,8 @@ Validates GrowID credentials and returns an authentication token.
 | `_token` | string | Yes | CSRF token from the dashboard page |
 | `growId` | string | Yes | GrowID username |
 | `password` | string | Yes | Account password |
+
+**Content-Type:** `text/html`
 
 **Response (Success):**
 ```json
@@ -340,6 +343,8 @@ zf|
 |-------|-------------|
 | `refreshToken` | Base64-encoded refresh token from previous login |
 | `clientData` | Pipe-separated client information (same format as dashboard) |
+
+**Content-Type:** `text/html`
 
 **Response (Success):**
 ```json
