@@ -36,3 +36,5 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Vitepress ignore
 docs/.vitepress/cache
+docs/.vitepress/dist
+docs/.vitepress/.temp
